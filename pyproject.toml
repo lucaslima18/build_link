@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "build-link"
+version = "0.1.0"
+description = ""
+authors = ["lucaslima18 <lucas.ala1999@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+fastapi = "^0.115.4"
+uvicorn = "^0.32.0"
+coloredlogs = "^15.0.1"
+python-dotenv = "^1.0.1"
+pyfiglet = "^1.0.2"
+requests = "^2.32.3"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
