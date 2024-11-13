@@ -1,12 +1,13 @@
+storage/*
 # Created by https://www.toptal.com/developers/gitignore/api/python
 # Edit at https://www.toptal.com/developers/gitignore?templates=python
-
+database.sqlite
+.vscode
 ### Python ###
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
 *$py.class
-
 # C extensions
 *.so
 
@@ -170,7 +171,13 @@ poetry.toml
 # ruff
 .ruff_cache/
 
-# LSP config files
-pyrightconfig.json
-
 # End of https://www.toptal.com/developers/gitignore/api/python
+
+caravel/storage/*.csv
+/caravel/storage/*.csv
+./caravel/storage/*.csv
+.tool-versions
+.flake8
+
+
+*__pycache__*
