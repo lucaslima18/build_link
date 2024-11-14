@@ -1,28 +1,25 @@
-from dataclasses import dataclass
 from typing import List
 
+from pydantic import BaseModel
 
-@dataclass
-class UserName:
+
+class UserName(BaseModel):
     title: str
     first: str
     last: str
 
 
-@dataclass
-class UserCoordinates:
+class UserCoordinates(BaseModel):
     latitude: str
     longitude: str
 
 
-@dataclass
-class UserTimezone:
+class UserTimezone(BaseModel):
     offset: str
     description: str
 
 
-@dataclass
-class UserLocation:
+class UserLocation(BaseModel):
     street: str
     city: str
     state: str
@@ -31,15 +28,13 @@ class UserLocation:
     timezone: UserTimezone
 
 
-@dataclass
-class UserPicture:
+class UserPicture(BaseModel):
     large: str
     medium: str
     thumbnail: str
 
 
-@dataclass
-class UserMetadata:
+class UserMetadata(BaseModel):
     user_type: str  # TODO: come to enum
     gender: str  # TODO come to enum too
     name: UserName
