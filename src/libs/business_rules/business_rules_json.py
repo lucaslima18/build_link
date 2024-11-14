@@ -20,9 +20,8 @@ logger = LogHandler()
 
 
 class BusinessRulesJSON(BusinessRulesInterface):
-    def __init__(self, data: Dict, content_type: str) -> None:
+    def __init__(self, data: Dict) -> None:
         self.data = data
-        self.content_type = content_type
 
     def run(self) -> UserMetadata | None:
         name = self.create_user_name()
