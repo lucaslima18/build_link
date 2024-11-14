@@ -1,4 +1,4 @@
-# build_link
+# JSM - Link Builder
 
 ```
         _..._
@@ -25,7 +25,7 @@
 |_____|___|_| \_|_|\_\ |____/ \___/|___|_____|____/|_____|_| \_\
 ```
 
-Powerd by 🚀: Lucas Amorim
-Email 📧: lucas.ala1999@gmail.com
-GitHub 🐙: lucas.ala1999@gmail.com
-Linkedin 🔗: https://www.linkedin.com/in/lucas-amorim-b09691173/
+- Powerd by 🚀: Lucas Amorim
+- Email 📧: lucas.ala1999@gmail.com
+- GitHub 🐙: lucas.ala1999@gmail.com
+- Linkedin 🔗: https://www.linkedin.com/in/lucas-amorim-b09691173/
