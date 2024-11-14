@@ -11,7 +11,6 @@ from src.modules.eligible_users.controllers import EligibleUsers
 
 def applicate_rules():
     users_metadata = UsersETL(users_origins=config.USERS_ORIGINS).data_extraction()
-    print(users_metadata)
     return users_metadata
 
 
