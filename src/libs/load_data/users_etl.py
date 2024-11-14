@@ -1,27 +1,41 @@
-import io, csv
-from typing import Dict, List
 import requests
+from typing import List, Union
 
-from src.libs.load_data.user_data_extractor import UserDataExtractorJSON
-from src.libs.business_rules.business_rules_csv import BusinessRulesCSV
-from src.libs.business_rules.business_rules_json import BusinessRulesJSON
+from src.libs.load_data.user_data_extractor import (
+    UserDataExtractorCSV,
+    UserDataExtractorJSON,
+)
 from src.libs.business_rules.schemas import UserMetadata
-
-from src.libs.load_data.ext import TransformationDataIsNull, UnsupportedContent
+from src.libs.load_data.ext import UnsupportedContent
 from src.shared.utils.log_handler import LogHandler
 
 logger = LogHandler()
 
 
 class UsersETL:
+    """
+    A class for performing the ETL (Extract, Transform, Load) process on eligible user data from various URL sources.
+
+    Attributes
+    ---
+    ```
+    - users_origins (List[str]): List of URLs to extract user data from.
+    - all_data (List[UserMetadata]): List to store all transformed user data.
+    ```
+    Methods
+    ---
+    ```py
+    def data_extraction() -> Union[List[UserMetadata], None]
+    ```
+    Executes the ETL process by consuming each URL in `users_origins`, determining its content type, and using the appropriate extractor to process
+    data. Unsupported content types raise an exception. Returns a list of transformed user data or `None` if an error occurs.
+    """
+
     def __init__(self, users_origins: List[str] = []) -> None:
         self.users_origins = users_origins
         self.all_data = []
 
-    def run(self):
-        self.data_extraction()
-
-    def data_extraction(self) -> List[UserMetadata] | None:
+    def data_extraction(self) -> Union[List[UserMetadata], None]:
         logger.info("Start ETL proccess of Users informations...")
         logger.info(f"searching for {self.users_origins} urls...")
         for url in self.users_origins:
@@ -42,13 +56,8 @@ class UsersETL:
                     )
 
                 elif "text/csv" in content_type or url.endswith(".csv"):
-                    logger.info("New csv content founded! start extraction...")
-
-                    csv_data = response.content.decode("utf-8-sig")
-                    csv_reader = csv.DictReader(io.StringIO(csv_data))
-                    rows = [row for row in csv_reader]
-                    transformed_rows = self.data_transform_csv(
-                        data_dict=rows, url=url, content_type=content_type
+                    transformed_rows = UserDataExtractorCSV().extract_data(
+                        all_data=self.all_data, response=response
                     )
                     self.all_data.extend(transformed_rows)
 
@@ -64,56 +73,3 @@ class UsersETL:
 
         logger.info(f"{len(self.all_data)} UserMetadata in cache...")
         return self.all_data
-
-    def data_transform_json(
-        self, data_dict: List[Dict], url: str, content_type: str
-    ) -> List[UserMetadata]:
-        transformed_data_dict = []
-
-        logger.info("Start data transformation of founded json content...")
-
-        if data_dict:
-            for data in data_dict:
-                transformed_data = BusinessRulesJSON(data=data).run()
-
-                if self.register_exist(data=transformed_data):
-                    logger.warning(f"UserMetadata with email {transformed_data.email}")
-
-                else:
-                    transformed_data_dict.append(transformed_data)
-
-            logger.info(
-                f"{len(transformed_data_dict)} data are transformed into UserMetadata object..."
-            )
-
-            return transformed_data_dict
-
-        raise TransformationDataIsNull(f"Have no data to transform for {url}")
-
-    def data_transform_csv(
-        self, data_dict: List[Dict], url: str, content_type: str
-    ) -> List[UserMetadata]:
-        transformed_data_dict = []
-
-        logger.info("Start data transformation of founded csv content...")
-
-        if data_dict:
-            for data in data_dict:
-                transformed_data = BusinessRulesCSV(data=data).run()
-
-                if self.register_exist(data=transformed_data):
-                    logger.warning(f"UserMetadata with email {transformed_data.email}")
-
-                else:
-                    transformed_data_dict.append(transformed_data)
-
-            logger.info(
-                f"{len(transformed_data_dict)} data are tranformed into UserMetadata object..."
-            )
-
-            return transformed_data_dict
-
-        raise TransformationDataIsNull(f"Have no data to transform for {url}")
-
-    def register_exist(self, data: UserMetadata | None) -> bool:
-        return True if data in self.all_data else False
