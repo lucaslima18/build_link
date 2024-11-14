@@ -1,6 +1,9 @@
 from csv import register_dialect
 from typing import Dict
 
+from src.shared.utils.convert_phone import convert_phone
+from src.shared.utils.convert_gender import convert_gender
+from src.shared.utils.convert_user_type import convert_user_type
 from src.libs.business_rules.ext import InvalidGenderException
 from src.libs.business_rules.interfaces import BusinessRulesInterface
 from src.libs.business_rules.schemas import (
@@ -32,22 +35,6 @@ class BusinessRulesJSON(BusinessRulesInterface):
             picture=picture,
         )
 
-    def convert_gender(self, gender: str) -> str | None:
-        try:
-            gender = gender.lower()
-
-            if gender == "female":
-                return "f"
-
-            elif gender == "male":
-                return "m"
-
-            else:
-                raise InvalidGenderException
-
-        except Exception as err:
-            logger.error(err)
-
     def create_user_name(self) -> UserName:
         user_name = UserName(
             title=self.data["name"]["title"],
@@ -78,7 +65,7 @@ class BusinessRulesJSON(BusinessRulesInterface):
             street=self.data["location"]["street"],
             city=self.data["location"]["city"],
             state=self.data["location"]["state"],
-            postcode=self.data["location"]["postcode"],
+            postcode=str(self.data["location"]["postcode"]),
             coordinates=self.create_user_coordinates(),
             timezone=self.create_user_timezone(),
         )
@@ -101,18 +88,26 @@ class BusinessRulesJSON(BusinessRulesInterface):
         picture: UserPicture,
     ) -> UserMetadata | None:
         try:
+            nationality = self.data.get("nationality", "BR")
             user_metadata = UserMetadata(
-                user_type="just a test",
-                gender=self.convert_gender(gender=self.data["gender"]),
+                user_type=convert_user_type(
+                    lat=float(location.coordinates.latitude),
+                    lon=float(location.coordinates.longitude),
+                ),
+                gender=convert_gender(gender=self.data["gender"]),
                 name=name,
                 location=location,
                 email=self.data["email"],
                 birthday=self.data["dob"]["date"],
                 registered=self.data["registered"]["date"],
-                telephone_numbers=[self.data["phone"]],
+                telephone_numbers=[
+                    convert_phone(
+                        phone_number=self.data["phone"], nationality=nationality
+                    )
+                ],
                 mobile_numbers=[self.data["cell"]],
                 picture=picture,
-                nationality=self.data.get("nationality", "BR"),
+                nationality=nationality,
             )
 
             return user_metadata
