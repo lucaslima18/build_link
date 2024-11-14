@@ -2,6 +2,7 @@ import io, csv
 from typing import Dict, List
 import requests
 
+from src.libs.load_data.user_data_extractor import UserDataExtractorJSON
 from src.libs.business_rules.business_rules_csv import BusinessRulesCSV
 from src.libs.business_rules.business_rules_json import BusinessRulesJSON
 from src.libs.business_rules.schemas import UserMetadata
@@ -30,12 +31,10 @@ class UsersETL:
                 content_type = response.headers.get("content-type", "")
 
                 if "application/json" in content_type:
-                    logger.info("New json content founded! start extraction...")
-
-                    json_data = response.json().get("results", [])
-                    transformed_json_data = self.data_transform_json(
-                        data_dict=json_data, url=url, content_type=content_type
+                    transformed_json_data = UserDataExtractorJSON().extract_data(
+                        all_data=self.all_data, response=response
                     )
+
                     self.all_data.extend(transformed_json_data)
 
                     logger.info(
@@ -75,9 +74,7 @@ class UsersETL:
 
         if data_dict:
             for data in data_dict:
-                transformed_data = BusinessRulesJSON(
-                    data=data, content_type=content_type
-                ).run()
+                transformed_data = BusinessRulesJSON(data=data).run()
 
                 if self.register_exist(data=transformed_data):
                     logger.warning(f"UserMetadata with email {transformed_data.email}")
@@ -102,9 +99,7 @@ class UsersETL:
 
         if data_dict:
             for data in data_dict:
-                transformed_data = BusinessRulesCSV(
-                    data=data, content_type=content_type
-                ).run()
+                transformed_data = BusinessRulesCSV(data=data).run()
 
                 if self.register_exist(data=transformed_data):
                     logger.warning(f"UserMetadata with email {transformed_data.email}")
