@@ -13,5 +13,4 @@ def convert_phone(phone_number: str, nationality: str) -> str | None:
         return converted_phone
 
     except Exception as err:
-        # TODO: make an custom error handling to take a custom KeyValueException
         logger.error(err)

@@ -35,8 +35,8 @@ class UserPicture(BaseModel):
 
 
 class UserMetadata(BaseModel):
-    user_type: str  # TODO: come to enum
-    gender: str  # TODO come to enum too
+    user_type: str
+    gender: str
     name: UserName
     location: UserLocation
     email: str
