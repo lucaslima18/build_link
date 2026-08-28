@@ -32,8 +32,6 @@
 
 # Objetivo do projeto
 
-O projeto foi baseado no teste [técnico da empresa Juntos Somos Mais](https://github.com/juntossomosmais/code-challenge?tab=readme-ov-file).
-
 Este projeto consiste em um serviço de disponibilização de dados de cliente elegíveis através de uma API REST que irá disponibilizar um endpoint de busca e filtragens. O sistema irá realizar um processo de ETL de dados para que sejam feitas as aplicações de regras de negócio e irá armazenar estes dados tratados em cache antes do início da API. Os dados são passados para o contexto da api que por fim, disponibiliza um endpoint com algumas opções relacionadas a filtragem e paginação.
 
 # Tecnologias utilizadas
