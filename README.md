@@ -1,4 +1,4 @@
-# JSM - Link Builder
+# Link Builder
 
 ```
         _..._
